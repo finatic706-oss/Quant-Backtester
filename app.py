@@ -1,3 +1,4 @@
+import requests
 import pandas as pd
 from flask import Flask, render_template, request, jsonify
 import yfinance as yf
@@ -17,16 +18,24 @@ def run_backtest():
     if not ticker:
         return jsonify({"error": "Please provide a valid stock ticker."}), 400
         
-    # Auto-append .NS if it's an Indian stock and doesn't have an extension
     if '.' not in ticker:
         ticker += '.NS'
         
     try:
+        # Custom session to bypass Yahoo Finance datacenter blocks
+        session = requests.Session()
+        session.headers.update({
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
+            'Accept': '*/*',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'Connection': 'keep-alive'
+        })
+        
         # Fetch 5 years of historical daily data
-        stock_data = yf.download(ticker, period="5y", interval="1d", progress=False)
+        stock_data = yf.download(ticker, period="5y", interval="1d", session=session, progress=False)
         
         if stock_data.empty:
-            return jsonify({"error": f"No data found for {ticker}. Please check the symbol."}), 404
+            return jsonify({"error": f"No data found for {ticker}. Please check the symbol or try again later."}), 404
             
         # yfinance returns MultiIndex columns sometimes in newer versions, flatten them
         if isinstance(stock_data.columns, pd.MultiIndex):
