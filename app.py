@@ -22,17 +22,16 @@ def run_backtest():
         ticker += '.NS'
         
     try:
-        # Custom session to bypass Yahoo Finance datacenter blocks
-        session = requests.Session()
-        session.headers.update({
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
-            'Accept': '*/*',
-            'Accept-Encoding': 'gzip, deflate, br',
-            'Connection': 'keep-alive'
+        # Use cloudscraper to bypass strict Yahoo Finance datacenter blocks
+        import cloudscraper
+        scraper = cloudscraper.create_scraper(browser={
+            'browser': 'chrome',
+            'platform': 'windows',
+            'desktop': True
         })
         
         # Fetch 5 years of historical daily data
-        stock_data = yf.download(ticker, period="5y", interval="1d", session=session, progress=False)
+        stock_data = yf.download(ticker, period="5y", interval="1d", session=scraper, progress=False)
         
         if stock_data.empty:
             return jsonify({"error": f"No data found for {ticker}. Please check the symbol or try again later."}), 404
