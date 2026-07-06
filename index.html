@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quant Terminal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="glow-bg"></div>
+    <div class="container">
+        <header>
+            <div class="logo">Quant<span>Terminal</span></div>
+            <p>Professional algorithmic backtesting engine</p>
+        </header>
+
+        <main>
+            <div class="control-panel">
+                <div class="input-group">
+                    <label for="tickerInput">Asset Ticker</label>
+                    <input type="text" id="tickerInput" placeholder="e.g. RELIANCE, AAPL" />
+                </div>
+                <div class="input-group">
+                    <label for="capitalInput">Initial Capital (₹)</label>
+                    <input type="number" id="capitalInput" placeholder="100000" value="100000" min="1000"/>
+                </div>
+                <button id="scanBtn" class="btn-primary">
+                    <span class="btn-text">Run Simulation</span>
+                    <div class="spinner hidden" id="btn-spinner"></div>
+                </button>
+            </div>
+            
+            <div id="error-message" class="hidden error"></div>
+
+            <div id="results" class="hidden">
+                <h2 class="results-title">Analysis: <span id="displayTicker" class="highlight"></span></h2>
+                
+                <!-- Benchmark Hero Section -->
+                <div class="benchmark-hero card">
+                    <div class="hero-left">
+                        <h3>Benchmark: Buy & Hold</h3>
+                        <p class="desc">What if you just bought and held for 5 years?</p>
+                        <div class="hero-metrics" id="metrics-buyandhold">
+                            <!-- Injected via JS -->
+                        </div>
+                    </div>
+                    <div class="hero-right chart-container">
+                        <canvas id="chart-buyandhold"></canvas>
+                    </div>
+                </div>
+
+                <div class="cards-grid">
+                    <!-- Strategy 1 -->
+                    <div class="card strategy-card">
+                        <div class="card-header">
+                            <h3>Momentum Breakout</h3>
+                            <span class="badge trend">Trend Following</span>
+                        </div>
+                        <p class="desc">Buys on 20-day high breakouts above 200 SMA. Exits on trailing 20-day low.</p>
+                        
+                        <div class="final-value-box">
+                            <span class="fv-label">Final Value</span>
+                            <span class="fv-amount" id="fv-momentum">₹ 0</span>
+                        </div>
+
+                        <div class="chart-container">
+                            <canvas id="chart-momentum"></canvas>
+                        </div>
+                        <div class="metrics" id="metrics-momentum">
+                            <!-- Metrics injected via JS -->
+                        </div>
+                        <button class="view-trades-btn hidden" data-strategy="Momentum Breakout">View All Trades</button>
+                    </div>
+
+                    <!-- Strategy 2 -->
+                    <div class="card strategy-card">
+                        <div class="card-header">
+                            <h3>Mean Reversion</h3>
+                            <span class="badge revert">RSI Stretch</span>
+                        </div>
+                        <p class="desc">Buys when RSI crashes below 30. Sells when RSI recovers above 70.</p>
+                        
+                        <div class="final-value-box">
+                            <span class="fv-label">Final Value</span>
+                            <span class="fv-amount" id="fv-meanrev">₹ 0</span>
+                        </div>
+
+                        <div class="chart-container">
+                            <canvas id="chart-meanrev"></canvas>
+                        </div>
+                        <div class="metrics" id="metrics-meanrev">
+                            <!-- Metrics injected via JS -->
+                        </div>
+                        <button class="view-trades-btn hidden" data-strategy="Mean Reversion (RSI)">View All Trades</button>
+                    </div>
+
+                    <!-- Strategy 3 -->
+                    <div class="card strategy-card">
+                        <div class="card-header">
+                            <h3>Golden Cross</h3>
+                            <span class="badge cross">MA Crossover</span>
+                        </div>
+                        <p class="desc">Buys when 50-day SMA crosses above 200-day SMA. Sells on Death Cross.</p>
+                        
+                        <div class="final-value-box">
+                            <span class="fv-label">Final Value</span>
+                            <span class="fv-amount" id="fv-crossover">₹ 0</span>
+                        </div>
+
+                        <div class="chart-container">
+                            <canvas id="chart-crossover"></canvas>
+                        </div>
+                        <div class="metrics" id="metrics-crossover">
+                            <!-- Metrics injected via JS -->
+                        </div>
+                        <button class="view-trades-btn hidden" data-strategy="MA Crossover">View All Trades</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal for Trade Logs -->
+    <div id="tradesModal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2 id="modalTitle">Trade Log</h2>
+            <div class="table-container">
+                <table id="tradesTable">
+                    <thead>
+                        <tr>
+                            <th>Entry Date</th>
+                            <th>Entry Price</th>
+                            <th>Exit Date</th>
+                            <th>Exit Price</th>
+                            <th>Profit / Loss</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tradesBody">
+                        <!-- Rows injected via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="/script.js"></script>
+</body>
+</html>
